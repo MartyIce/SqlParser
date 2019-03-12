@@ -47,6 +47,7 @@
     <Compile Include="Builders\FunctionBlockBuilder.cs" />
     <Compile Include="Builders\Join.cs" />
     <Compile Include="Builders\On.cs" />
+    <Compile Include="Builders\OnJoinStatementBuilder.cs" />
     <Compile Include="Builders\ParenBlockBuilder.cs" />
     <Compile Include="Builders\Select.cs" />
     <Compile Include="Builders\SelectField.cs" />

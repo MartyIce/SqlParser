@@ -14,7 +14,6 @@ namespace Maviicon.SqlParser.Builders
         {
             i++;
 
-            
             // Select
             var bi = new BuilderIterator();
             bi.AddBuilder(new Where(), true, true);
