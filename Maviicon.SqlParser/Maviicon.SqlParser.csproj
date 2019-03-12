@@ -41,6 +41,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Builders\BuilderIterator.cs" />
     <Compile Include="Builders\Comma.cs" />
     <Compile Include="Builders\From.cs" />
     <Compile Include="Builders\FunctionBlockBuilder.cs" />

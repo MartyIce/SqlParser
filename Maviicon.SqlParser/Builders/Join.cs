@@ -10,11 +10,11 @@ namespace Maviicon.SqlParser.Builders
             return token == "join";
         }
 
-        public void Process(ref int i, List<string> tokens, SelectStatement ss)
+        public override void Build(ParsedSql ret, List<string> tokens, ref int i)
         {
             i++;
 
-            (new Table()).Process(ref i, tokens, ss);
+            (new Table()).Build(ret, tokens, ref i);
         }
     }
 }

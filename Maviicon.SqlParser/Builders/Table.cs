@@ -9,8 +9,8 @@ namespace Maviicon.SqlParser.Builders
         {
             return true;
         }
-
-        public void Process(ref int i, List<string> tokens, SelectStatement tf)
+        
+        public override void Build(ParsedSql ret, List<string> tokens, ref int i)
         {
             var on = new On();
             var join = new Join();
@@ -19,7 +19,7 @@ namespace Maviicon.SqlParser.Builders
             if (!join.Match(tokens[i], tokens, i) && !on.Match(tokens[i], tokens, i))
                 t.Alias = tokens[i++];
 
-            tf.Tables.Add(t);
+            ret.Select.Tables.Add(t);
         }
     }
 }

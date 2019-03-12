@@ -11,7 +11,7 @@ namespace Maviicon.SqlParser.Builders
         }
 
         static List<string> operators = new List<string> { "=", "!=", ">", "<"};
-        public void Process(ref int i, List<string> tokens, SelectStatement ss)
+        public override void Build(ParsedSql ret, List<string> tokens, ref int i)
         {
             i++;
             bool onLeft = true;
@@ -19,42 +19,52 @@ namespace Maviicon.SqlParser.Builders
             var join = new Join();
             var where = new Where();
             var on = new On();
+
+//            var bi = new BuilderIterator();
+//            bi.AddBuilder(new Join());
+//            bi.AddBuilder(new Where());
+//            bi.AddBuilder(new On());
+//            bi.Build(ret, tokens, ref i);
+
+
             while (i < tokens.Count)
             {
                 var token = tokens[i];
                 if (join.Match(token, tokens, i))
                 {
-                    join.Process(ref i, tokens, ss);
+                    join.Build(ret, tokens, ref i);
                 }
                 else if (where.Match(token, tokens, i))
                 {
-                    where.Process(ref i, tokens, ss);
+                    where.Build(ret, tokens, ref i);
                 }
                 else if (on.Match(token, tokens, i))
                 {
-                    on.Process(ref i, tokens, ss);
+                    on.Build(ret, tokens, ref i);
                 }
-                else if (operators.Contains(token))
-                {
-                    js.Operator = token;
-                    onLeft = false;
-                    i++;
-                }
-                else if (token == "and")
-                {
-                    js = new JoinStatement();
-                    i++;
-                }
-                else if(onLeft)
-                {
-                    js.LeftClause = token;
-                    i++;
-                }
-                else
-                {
-                    js.RightClause = token;
-                    ss.Joins.Add(js);
-                    i++;
+                else {
+                    if (operators.Contains(token))
+                    {
+                        js.Operator = token;
+                        onLeft = false;
+                        i++;
+                    }
+                    if (token == "and" || token == "or")
+                    {
+                        js = new JoinStatement();
+                        i++;
+                    }
+                    else if(onLeft)
+                    {
+                        js.LeftClause = token;
+                        i++;
+                    }
+                    else
+                    {
+                        js.RightClause = token;
+                        ret.Select.Joins.Add(js);
+                        i++;
+                    }
                 }
             }
         }

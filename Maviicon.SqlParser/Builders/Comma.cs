@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using Maviicon.SqlParser.Model;
 
 namespace Maviicon.SqlParser.Builders
 {
@@ -7,6 +8,11 @@ namespace Maviicon.SqlParser.Builders
         public override bool Match(string token, List<string> tokens, int i)
         {
             return token == ",";
+        }
+
+        public override void Build(ParsedSql ret, List<string> tokens, ref int i)
+        {
+            i++;
         }
     }
 }

@@ -11,7 +11,7 @@ namespace Maviicon.SqlParser.Builders
         }
 
         static List<string> operators = new List<string> { "=", "!=", ">", "<"};
-        public void Process(ref int i, List<string> tokens, SelectStatement ss)
+        public override void Build(ParsedSql ret, List<string> tokens, ref int i)
         {
             i++;
             bool onLeft = true;
@@ -39,7 +39,7 @@ namespace Maviicon.SqlParser.Builders
                 else
                 {
                     ws.RightClause = token;
-                    ss.Wheres.Add(ws);
+                    ret.Select.Wheres.Add(ws);
                     i++;
                 }
             }

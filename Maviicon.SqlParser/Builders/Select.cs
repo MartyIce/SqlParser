@@ -17,27 +17,11 @@ namespace Maviicon.SqlParser.Builders
             i++;
 
             // Select
-            var from = new From();
-            var comma = new Comma();
-            var selectField = new SelectField();
-
-            while (i < tokens.Count)
-            {
-                var token = tokens[i];
-                if (from.Match(token, tokens, i))
-                {
-                    from.Build(ret, tokens, ref i);
-                    break;
-                }
-                else if (comma.Match(tokens[i], tokens, i))
-                {
-                    i++;
-                }
-                else
-                {
-                    selectField.Build(ret, tokens, ref i);
-                }
-            }
+            var bi = new BuilderIterator();
+            bi.AddBuilder(new From());
+            bi.AddBuilder(new Comma());
+            bi.AddBuilder(new SelectField(), false);
+            bi.Build(ret, tokens, ref i);
 
         }
     }

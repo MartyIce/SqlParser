@@ -1,7 +1,6 @@
 ﻿using System.Collections.Generic;
 using Maviicon.SqlParser.Builder;
 using Maviicon.SqlParser.Model;
-using Maviicon.SqlParser.Parsers;
 
 namespace Maviicon.SqlParser.Builders
 {
@@ -17,7 +16,7 @@ namespace Maviicon.SqlParser.Builders
         {
             var token = tokens[i];
 
-            var sf = new Maviicon.SqlParser.Model.SelectField();
+            var sf = new Model.SelectField();
 
             if (token == "(")
             {
@@ -32,10 +31,13 @@ namespace Maviicon.SqlParser.Builders
                 sf.Name = tokens[i++];
             }
 
-            if (tokens[i] == "as")
+            if (i < tokens.Count)
             {
-                sf.Alias = tokens[++i];
-                i++;
+                if (tokens[i] == "as")
+                {
+                    sf.Alias = tokens[++i];
+                    i++;
+                }
             }
 
             ret.Select.Fields.Add(sf);

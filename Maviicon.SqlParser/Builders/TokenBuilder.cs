@@ -7,8 +7,6 @@ namespace Maviicon.SqlParser.Builders
     {
         public abstract bool Match(string token, List<string> tokens, int i);
 
-        public virtual void Build(ParsedSql ret, List<string> tokens, ref int i)
-        {
-        }
+        public abstract void Build(ParsedSql ret, List<string> tokens, ref int i);
     }
 }
