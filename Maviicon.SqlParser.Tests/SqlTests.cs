@@ -71,13 +71,14 @@ namespace Maviicon.SqlParser.Tests
         [Fact]
         public void GroupBy()
         {
-            string sql = @"SELECT a.Type, Avg(a.Weight) from Accounts a Group By a.Type";
+            string sql = @"SELECT a.Type, a.Class, Avg(a.Weight) from Accounts a Group By a.Type, a.Class";
             SqlParser sp = new SqlParser();
             var parsedSql = sp.Parse(sql);
-            Assert.Equal(2, parsedSql.Select.Fields.Count);
+            Assert.Equal(3, parsedSql.Select.Fields.Count);
             Assert.Equal(1, parsedSql.Select.Tables.Count);
             Assert.Equal(0, parsedSql.Select.Joins.Count);
             Assert.Equal(0, parsedSql.Select.Wheres.Count);
+            Assert.Equal(2, parsedSql.Select.GroupBys.Count);
         }
 
         [Fact]

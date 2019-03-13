@@ -45,6 +45,8 @@
     <Compile Include="Builders\Comma.cs" />
     <Compile Include="Builders\From.cs" />
     <Compile Include="Builders\FunctionBlockBuilder.cs" />
+    <Compile Include="Builders\GroupBy.cs" />
+    <Compile Include="Builders\GroupByField.cs" />
     <Compile Include="Builders\Join.cs" />
     <Compile Include="Builders\On.cs" />
     <Compile Include="Builders\OnJoinStatementBuilder.cs" />
@@ -52,10 +54,14 @@
     <Compile Include="Builders\Select.cs" />
     <Compile Include="Builders\SelectField.cs" />
     <Compile Include="Builders\Table.cs" />
+    <Compile Include="Builders\TableColumnName.cs" />
     <Compile Include="Builders\TokenBuilder.cs" />
     <Compile Include="Builders\Where.cs" />
+    <Compile Include="Builders\WhereStatementBuilder.cs" />
+    <Compile Include="Model\GroupByField.cs" />
     <Compile Include="Model\JoinStatement.cs" />
     <Compile Include="Model\ParsedSql.cs" />
+    <Compile Include="Model\TableColumnName.cs" />
     <Compile Include="Parsers\Comma.cs" />
     <Compile Include="Parsers\From.cs" />
     <Compile Include="Parsers\LeftParen.cs" />

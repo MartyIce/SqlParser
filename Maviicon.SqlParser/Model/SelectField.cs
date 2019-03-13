@@ -1,8 +1,11 @@
 ﻿namespace Maviicon.SqlParser.Model
 {
-    public class SelectField
+    public class SelectField : TableColumnName
     {
-        public string Name;
+        public SelectField()
+        {
+        }
+
         public string Alias;
         public override string ToString() => Name + (Alias != null ? " AS " + Alias : "");
     }

@@ -12,6 +12,13 @@ namespace Maviicon.SqlParser
         {
             var tokens = Tokenize(sql);
 
+            var ret = Parse(tokens);
+
+            return ret;
+        }
+
+        private static ParsedSql Parse(List<string> tokens)
+        {
             var ret = new ParsedSql
             {
             };
@@ -29,7 +36,6 @@ namespace Maviicon.SqlParser
                         builder.Build(ret, tokens, ref i);
                     }
                 }
-
             }
 
             return ret;

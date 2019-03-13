@@ -1,46 +1,21 @@
 ﻿using System.Collections.Generic;
-using Maviicon.SqlParser.Builder;
 using Maviicon.SqlParser.Model;
 
 namespace Maviicon.SqlParser.Builders
 {
-    public class SelectField : TokenBuilder
+    public class SelectField : TableColumnName<Model.SelectField>
     {
-        public override bool Match(string token, List<string> tokens, int i)
+        public override void ContinuedBuildAppend(ParsedSql ret, List<string> tokens, ref int i, Model.SelectField field)
         {
-            // Not really capable of identifying it's relevance from one token.  Relies on outer builder identification
-            return true;
-        }
-
-        public override void Build(ParsedSql ret, List<string> tokens, ref int i)
-        {
-            var token = tokens[i];
-
-            var sf = new Model.SelectField();
-
-            if (token == "(")
-            {
-                sf.Name = ParenBlockBuilder.ConsumeParenBlock(tokens, ref i);
-            }
-            else if (FunctionBlockBuilder.Match(token, tokens, i))
-            {
-                sf.Name = FunctionBlockBuilder.ConsumeFunctionBlock(tokens, ref i);
-            }
-            else
-            {
-                sf.Name = tokens[i++];
-            }
-
             if (i < tokens.Count)
             {
                 if (tokens[i] == "as")
                 {
-                    sf.Alias = tokens[++i];
+                    field.Alias = tokens[++i];
                     i++;
                 }
             }
-
-            ret.Select.Fields.Add(sf);
+            ret.Select.Fields.Add(field);
         }
     }
 }
