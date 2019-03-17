@@ -29,7 +29,7 @@ namespace Maviicon.SqlParser.Builders
                 _onLeft = false;
                 i++;
             }
-            if (token == "and" || token == "or")
+            if (Constants.BooleanOperators.Contains(token))
             {
                 _js = new JoinStatement();
                 i++;

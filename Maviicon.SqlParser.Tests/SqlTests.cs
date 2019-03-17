@@ -82,13 +82,85 @@ namespace Maviicon.SqlParser.Tests
         }
 
         [Fact]
+        public void SimpleSubQuery()
+        {
+            string sql = @"SELECT a.id from (select id from Accounts) a";
+            SqlParser sp = new SqlParser();
+            var parsedSql = sp.Parse(sql);
+            Assert.Equal(1, parsedSql.Select.Fields.Count);
+            Assert.Equal(1, parsedSql.Select.Tables.Count);
+            Assert.Equal(0, parsedSql.Select.Joins.Count);
+            Assert.Equal(0, parsedSql.Select.Wheres.Count);
+            Assert.Equal(0, parsedSql.Select.GroupBys.Count);
+        }
+
+        [Fact]
+        public void SimpleWhereWithoutAlias()
+        {
+            string sql = @"SELECT name from accounts where id = 1";
+            SqlParser sp = new SqlParser();
+            var parsedSql = sp.Parse(sql);
+            Assert.Equal(1, parsedSql.Select.Fields.Count);
+            Assert.Equal(1, parsedSql.Select.Tables.Count);
+            Assert.Equal(0, parsedSql.Select.Joins.Count);
+            Assert.Equal(1, parsedSql.Select.Wheres.Count);
+            Assert.Equal(0, parsedSql.Select.GroupBys.Count);
+        }
+
+        [Fact]
+        public void MultipleFunctions()
+        {
+            string sql = @"SELECT SUM((CASE 
+                                        WHEN a.type = 1 THEN 'a'
+                                        ELSE 'b'
+                                     END)) AS [UnreadCount], COUNT(*) AS [TotalCount]
+                                FROM accounts a";
+
+            SqlParser sp = new SqlParser();
+            var parsedSql = sp.Parse(sql);
+            Assert.Equal(2, parsedSql.Select.Fields.Count);
+            Assert.Equal("[unreadcount]", parsedSql.Select.Fields[0].Alias);
+            Assert.Equal("[totalcount]", parsedSql.Select.Fields[1].Alias);
+            Assert.Equal(1, parsedSql.Select.Tables.Count);
+            Assert.Equal(0, parsedSql.Select.Joins.Count);
+            Assert.Equal(0, parsedSql.Select.Wheres.Count);
+        }
+        [Fact]
+        public void BigHonkinSubquery()
+        {
+            string sql = @"SELECT SUM((CASE 
+                                        WHEN a.type = 1 THEN 'a'
+                                        ELSE 'b'
+                                     END)) AS [UnreadCount], COUNT(*) AS [TotalCount]
+                                FROM (
+    SELECT 1 AS [value], [t0].[field1], [t1].[field2], [t1].[field3]
+    FROM [dbo].[table1] AS [t0]
+    LEFT OUTER JOIN ([dbo].[table2] AS [t1]
+        INNER JOIN ([dbo].[table3] AS [t2]
+            INNER JOIN ([dbo].[table4] AS [t3]
+                INNER JOIN [dbo].[table5] AS [t4] ON [t4].[ID] = [t3].[OtherID]) ON [t3].[ID] = [t2].[OtherID]) ON [t2].[ID] = [t1].[OtherID]
+        )) AS [t9] 
+WHERE ([t9].[OtherID] IS NULL)
+GROUP BY [t9].[value]";
+            
+            SqlParser sp = new SqlParser();
+            var parsedSql = sp.Parse(sql);
+            Assert.Equal(2, parsedSql.Select.Fields.Count);
+            Assert.Equal("[unreadcount]", parsedSql.Select.Fields[0].Alias);
+            Assert.Equal("[totalcount]", parsedSql.Select.Fields[1].Alias);
+            Assert.Equal(1, parsedSql.Select.Tables.Count);
+            Assert.Equal(0, parsedSql.Select.Joins.Count);
+            Assert.Equal(1, parsedSql.Select.Wheres.Count);
+            Assert.Equal(1, parsedSql.Select.GroupBys.Count);
+        }
+        [Fact]
         public void BiggerCaseAndGroupBy()
         {
             string sql = @"SELECT SUM(
     (CASE 
         WHEN [t9].[IsUnviewed] = 1 THEN 14
         ELSE 15
-     END)) AS [UnreadCount], COUNT(*) AS [TotalCount]
+     END)) AS [UnreadCount], COUNT(*) AS [TotalCount] 
 FROM (
     SELECT 1 AS [value], [t0].[MailboxFolderID], [t1].[PItemStatusEnumID], [t1].[CurrentOpTypeEnumID], [t1].[CurrentOpExtractStatusEnumID], [t1].[ID], [t0].[SystemFolderEnumID], [t1].[PurgeScansStatusEnumID], [t1].[IsScanOnly], [t0].[MailboxID], [t0].[IsUnviewed]
     FROM [dbo].[VItems] AS [t0]
@@ -100,7 +172,7 @@ FROM (
     LEFT OUTER JOIN ([dbo].[VItemMailAttributes] AS [t6]
         LEFT OUTER JOIN [dbo].[VItemAddresses] AS [t7] ON [t7].[ID] = [t6].[SenderAddressID]) ON [t6].[VItemID] = [t0].[ID]
     INNER JOIN [dbo].[Mailboxes] AS [t8] ON [t8].[ID] = [t0].[MailboxID]
-    ) AS [t9]
+    ) AS [t9] 
 WHERE ([t9].[MailboxFolderID] IS NULL) AND ((([t9].[PItemStatusEnumID] = 1) AND (([t9].[CurrentOpTypeEnumID] IS NULL) OR (NOT (([t9].[CurrentOpTypeEnumID]) IN (24, 34, 64, 65, 32))) OR ([t9].[CurrentOpExtractStatusEnumID] = 5))) OR ((EXISTS(
     SELECT NULL AS [EMPTY]
     FROM [dbo].[Scans] AS [t10]
@@ -111,11 +183,10 @@ GROUP BY [t9].[value]";
 
             SqlParser sp = new SqlParser();
             var parsedSql = sp.Parse(sql);
-            Assert.Equal(1, parsedSql.Select.Fields.Count);
-            Assert.Equal("[value]", parsedSql.Select.Fields[0].Alias);
-            Assert.Equal(0, parsedSql.Select.Tables.Count);
+            Assert.Equal(2, parsedSql.Select.Fields.Count);
+            Assert.Equal(1, parsedSql.Select.Tables.Count);
             Assert.Equal(0, parsedSql.Select.Joins.Count);
-            Assert.Equal(0, parsedSql.Select.Wheres.Count);
+            Assert.Equal(3, parsedSql.Select.Wheres.Count);
         }
         [Fact]
         public void Massive()

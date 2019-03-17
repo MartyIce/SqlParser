@@ -24,6 +24,30 @@ namespace Maviicon.SqlParser.Builder
 
             return sb.ToString();
         }
+        public static string ConsumeParenBlock(string input, ref int index)
+        {
+            index = input.IndexOf("(");
+            int nestedCount = 0;
+            var sb = new StringBuilder();
+            for (int i = index; i < input.Length; i++)
+            {
+                if (input[i] == '(')
+                {
+                    nestedCount++;
+                } else if (input[i] == ')')
+                {
+                    nestedCount--;
+                }
+
+                sb.Append(input[i]);
+
+                if (nestedCount == 0)
+                    break;
+
+            }
+
+            return sb.ToString();
+        }
 
     }
 }

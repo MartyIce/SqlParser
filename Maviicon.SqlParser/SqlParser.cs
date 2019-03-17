@@ -38,6 +38,15 @@ namespace Maviicon.SqlParser
                 }
             }
 
+            var decomposers = new List<Decomposers.SqlDecomposer>
+            {
+                new Decomposers.WhereClauseDecomposer(),
+            };
+            foreach (var decomposer in decomposers)
+            {
+                decomposer.Decompose(ret);
+            }
+
             return ret;
         }
 

@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using Maviicon.SqlParser.Builder;
 using Maviicon.SqlParser.Model;
 
 namespace Maviicon.SqlParser.Builders
@@ -7,7 +8,6 @@ namespace Maviicon.SqlParser.Builders
     {
         private bool _onLeft;
         private WhereStatement _ws;
-        static List<string> operators = new List<string> { "=", "!=", ">", "<"};
 
         public WhereStatementBuilder()
         {
@@ -23,17 +23,25 @@ namespace Maviicon.SqlParser.Builders
         public override void Build(ParsedSql ret, List<string> tokens, ref int i)
         {
             var token = tokens[i];
-            if (operators.Contains(token))
+            if (Constants.ComparisonOperators.Contains(token))
             {
                 _ws.Operator = token;
                 _onLeft = false;
                 i++;
             }
-            else if (token == "and" || token == "or")
+            else if (Constants.BooleanOperators.Contains(token))
             {
-                _ws = new WhereStatement();
+                _ws = new WhereStatement
+                {
+                    PrecedingOperator = token,
+                };
                 _onLeft = true;
                 i++;
+            }
+            else if (token == "(")
+            {
+                _ws.LeftClause = ParenBlockBuilder.ConsumeParenBlock(tokens, ref i);
+                ret.Select.Wheres.Add(_ws);
             }
             else if(_onLeft)
             {
